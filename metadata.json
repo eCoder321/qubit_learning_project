@@ -1,0 +1,5 @@
+{
+  "name": "Quantum Learning Journey",
+  "description": "An interactive 3D visualization tool to explore single-qubit quantum states and the geometric effect of various quantum gates on the Bloch Sphere.",
+  "requestFramePermissions": []
+}
