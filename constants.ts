@@ -7,7 +7,7 @@ export const TOPICS: Topic[] = [
     description: 'The fundamental building block of quantum information. Learn about |0⟩, |1⟩, and the space in between.',
     category: 'Basics',
     difficulty: 'Beginner',
-    status: 'coming-soon',
+    status: 'available',
     icon: 'Binary'
   },
   {

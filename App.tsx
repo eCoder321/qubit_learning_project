@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import LandingPage from './components/LandingPage';
 import QuantumGatesView from './components/QuantumGatesView';
+import QubitModule from './components/QubitModule';
 
 const App: React.FC = () => {
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
@@ -20,6 +21,8 @@ const App: React.FC = () => {
         <LandingPage onSelectTopic={handleSelectTopic} />
       ) : currentTopic === 'quantum-gates' ? (
         <QuantumGatesView onBack={handleBackToJourney} />
+      ) : currentTopic === 'qubits' ? (
+        <QubitModule onBack={handleBackToJourney} />
       ) : (
         <div className="flex flex-col items-center justify-center h-screen bg-[#020617] text-slate-200">
           <h2 className="text-2xl font-bold mb-4">Module Under Construction</h2>
