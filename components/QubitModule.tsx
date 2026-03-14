@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Cylinder, OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import { RotateCcw } from 'lucide-react';
+import Tooltip from './Tooltip';
 
 const SpinningCoin: React.FC<{ isSpinning: boolean; result: 'heads' | 'tails' | null }> = ({ isSpinning, result }) => {
   const group = useRef<THREE.Group>(null);
@@ -84,7 +85,7 @@ const QubitModule: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       <div className="max-w-5xl mx-auto">
         <h1 className="text-5xl font-bold mb-6 tracking-tight">What is a Qubit?</h1>
         <p className="text-xl text-slate-400 mb-12 leading-relaxed max-w-3xl">
-          A qubit is the fundamental unit of quantum information. Unlike a classical bit that can only be 0 or 1, a qubit can exist in a linear combination of both states simultaneously.
+          A qubit is the fundamental unit of quantum information. Unlike a classical bit that can only be 0 or 1, a qubit can exist in a <Tooltip text="Plain English: It means the qubit is in a state that is a weighted sum of both 0 and 1 at the same time, rather than being just one or the other.">linear combination</Tooltip> of both states simultaneously.
         </p>
 
         <div className="grid grid-cols-2 gap-8 mb-12">
@@ -104,7 +105,7 @@ const QubitModule: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </p>
           </div>
 
-          {/* Quantum Side */}
+          {/* Quantum Side + Experiment */}
           <div className="bg-slate-900/50 p-8 rounded-3xl border border-slate-800 flex flex-col items-center">
             <h2 className="text-2xl font-bold mb-8 text-white">Quantum Bit (Qubit)</h2>
             <div className="w-32 h-32 mb-6">
@@ -114,54 +115,53 @@ const QubitModule: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 <SpinningCoin isSpinning={isSpinning} result={result} />
               </Canvas>
             </div>
-            <p className="text-center text-sm text-slate-400 max-w-xs">
+            <p className="text-center text-sm text-slate-400 max-w-xs mb-8">
               A qubit in superposition is like a spinning coin—a blur of both states until measured.
             </p>
-          </div>
-        </div>
 
-        {/* Experiment Area */}
-        <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-bold text-white">Measurement Experiment</h3>
-            <button onClick={resetStats} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-              <RotateCcw size={16} /> Reset Stats
-            </button>
-          </div>
+            {/* Experiment Controls */}
+            <div className="w-full pt-8 border-t border-slate-800">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-white">Measurement</h3>
+                <button onClick={resetStats} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm">
+                  <RotateCcw size={14} /> Reset
+                </button>
+              </div>
 
-          <div className="flex items-center gap-8">
-            <button 
-              onClick={isSpinning ? handleMeasure : handleSpinAgain}
-              className="px-10 py-4 bg-sky-600 hover:bg-sky-700 rounded-full font-bold text-lg transition-colors"
-            >
-              {isSpinning ? 'Measure Qubit' : 'Spin Again'}
-            </button>
+              <div className="flex flex-col items-center gap-6">
+                <button 
+                  onClick={isSpinning ? handleMeasure : handleSpinAgain}
+                  className="px-8 py-3 bg-sky-600 hover:bg-sky-700 rounded-full font-bold transition-colors w-full"
+                >
+                  {isSpinning ? 'Measure Qubit' : 'Spin Again'}
+                </button>
 
-            <div className="flex-1 h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={data} innerRadius={50} outerRadius={70} paddingAngle={5} dataKey="value">
-                    {data.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+                <div className="w-full h-32">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={data} innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value">
+                        {data.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
 
-          {/* History Log */}
-          <div className="mt-8 pt-8 border-t border-slate-800">
-            <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Measurement History (Last 10)</h4>
-            <div className="flex gap-2 font-mono text-sm">
-              {history.map((h, i) => (
-                <span key={i} className={`px-3 py-1 rounded ${h === 'heads' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700 text-slate-300'}`}>
-                  {h === 'heads' ? 'H' : 'T'}
-                </span>
-              ))}
-              {history.length === 0 && <span className="text-slate-600 italic">No measurements yet...</span>}
+              {/* History Log */}
+              <div className="mt-6 pt-6 border-t border-slate-800">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">History</h4>
+                <div className="flex gap-1 font-mono text-xs flex-wrap">
+                  {history.map((h, i) => (
+                    <span key={i} className={`px-2 py-1 rounded ${h === 'heads' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700 text-slate-300'}`}>
+                      {h === 'heads' ? 'H' : 'T'}
+                    </span>
+                  ))}
+                  {history.length === 0 && <span className="text-slate-600 italic">No measurements...</span>}
+                </div>
+              </div>
             </div>
           </div>
         </div>
